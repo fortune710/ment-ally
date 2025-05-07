@@ -1,18 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import useWebRTCAudioSession from "@/hooks/use-webrtc"
-import { tools } from "@/lib/tools"
-import { Welcome } from "@/components/welcome"
-import { VoiceSelector } from "@/components/voice-select"
-import { BroadcastButton } from "@/components/broadcast-button"
-import { StatusDisplay } from "@/components/status"
-import { TokenUsageDisplay } from "@/components/token-usage"
-import { MessageControls } from "@/components/message-controls"
-import { ToolsEducation } from "@/components/tools-education"
-import { TextInput } from "@/components/text-input"
 import { motion } from "framer-motion"
-import { useToolsFunctions } from "@/hooks/use-tools"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 
