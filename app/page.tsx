@@ -13,87 +13,45 @@ import { ToolsEducation } from "@/components/tools-education"
 import { TextInput } from "@/components/text-input"
 import { motion } from "framer-motion"
 import { useToolsFunctions } from "@/hooks/use-tools"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 const App: React.FC = () => {
-  // State for voice selection
-  const [voice, setVoice] = useState("ash")
-
-  // WebRTC Audio Session Hook
-  const {
-    status,
-    isSessionActive,
-    registerFunction,
-    handleStartStopClick,
-    msgs,
-    conversation,
-    sendTextMessage
-  } = useWebRTCAudioSession(voice, tools)
-
-  // Get all tools functions
-  const toolsFunctions = useToolsFunctions();
-
-  useEffect(() => {
-    // Register all functions by iterating over the object
-    Object.entries(toolsFunctions).forEach(([name, func]) => {
-      const functionNames: Record<string, string> = {
-        timeFunction: 'getCurrentTime',
-        backgroundFunction: 'changeBackgroundColor',
-        partyFunction: 'partyMode',
-        launchWebsite: 'launchWebsite', 
-        copyToClipboard: 'copyToClipboard',
-        scrapeWebsite: 'scrapeWebsite'
-      };
-      
-      registerFunction(functionNames[name], func);
-    });
-  }, [registerFunction, toolsFunctions])
+  const router = useRouter();
 
   return (
-    <main className="h-full">
-      <motion.div 
-        className="container flex flex-col items-center justify-center mx-auto max-w-3xl my-20 p-12 border rounded-lg shadow-xl"
+    <main className="h-screen flex items-center justify-center">
+      <motion.div
+        className="container flex flex-col items-center justify-center mx-auto max-w-3xl p-12 border rounded-lg shadow-xl text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Welcome />
-        
-        <motion.div 
-          className="w-full max-w-md bg-card text-card-foreground rounded-xl border shadow-sm p-6 space-y-4"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+        <motion.h1
+          className="text-5xl font-bold mb-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <VoiceSelector value={voice} onValueChange={setVoice} />
-          
-          <div className="flex flex-col items-center gap-4">
-            <BroadcastButton 
-              isSessionActive={isSessionActive} 
-              onClick={handleStartStopClick}
-            />
-          </div>
-          {msgs.length > 4 && <TokenUsageDisplay messages={msgs} />}
-          {status && (
-            <motion.div 
-              className="w-full flex flex-col gap-2"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <MessageControls conversation={conversation} msgs={msgs} />
-              <TextInput 
-                onSubmit={sendTextMessage}
-                disabled={!isSessionActive}
-              />
-            </motion.div>
-          )}
+          Welcome to Mentally
+        </motion.h1>
+        <motion.p
+          className="text-xl text-muted-foreground mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          Your 24/7 mind help
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <Button onClick={() => router.push("/session")} size="lg" className="px-8 py-6 text-lg">
+            Start your session
+          </Button>
         </motion.div>
-        
-        {status && <StatusDisplay status={status} />}
-        <div className="w-full flex flex-col items-center gap-4">
-          <ToolsEducation />
-        </div>
       </motion.div>
     </main>
   )

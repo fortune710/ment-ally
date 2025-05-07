@@ -27,6 +27,7 @@ interface UseWebRTCAudioSessionReturn {
   currentVolume: number;
   conversation: Conversation[];
   sendTextMessage: (text: string) => void;
+  isAISpeaking: boolean
 }
 
 /**
@@ -40,6 +41,7 @@ export default function useWebRTCAudioSession(
   // Connection/session states
   const [status, setStatus] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const [isAISpeaking, setAISpeaking] = useState(false);
 
   // Audio references for local mic
   // Approach A: explicitly typed as HTMLDivElement | null
@@ -126,7 +128,7 @@ export default function useWebRTCAudioSession(
       ephemeralUserMessageIdRef.current = ephemeralId;
 
       const newMessage: Conversation = {
-        id: ephemeralId,
+        id: ephemeralId ?? "",
         role: "user",
         text: "",
         timestamp: new Date().toISOString(),
@@ -137,7 +139,7 @@ export default function useWebRTCAudioSession(
       // Append the ephemeral item to conversation
       setConversation((prev) => [...prev, newMessage]);
     }
-    return ephemeralId;
+    return ephemeralId ?? "";
   }
 
   /**
@@ -241,6 +243,7 @@ export default function useWebRTCAudioSession(
             timestamp: new Date().toISOString(),
             isFinal: false,
           };
+          setAISpeaking(true);
 
           setConversation((prev) => {
             const lastMsg = prev[prev.length - 1];
@@ -401,6 +404,8 @@ export default function useWebRTCAudioSession(
       const audioEl = document.createElement("audio");
       audioEl.autoplay = true;
 
+      
+
       // Inbound track => assistant's TTS
       pc.ontrack = (event) => {
         audioEl.srcObject = event.streams[0];
@@ -416,6 +421,11 @@ export default function useWebRTCAudioSession(
         // Start volume monitoring
         volumeIntervalRef.current = window.setInterval(() => {
           setCurrentVolume(getVolume());
+          if (getVolume() > 0 && !isAISpeaking) {
+            setAISpeaking(true);
+          } else {
+            setAISpeaking(false);
+          }
         }, 100);
       };
 
@@ -497,6 +507,7 @@ export default function useWebRTCAudioSession(
     setStatus("Session stopped");
     setMsgs([]);
     setConversation([]);
+    setAISpeaking(false);
   }
 
   /**
@@ -573,5 +584,6 @@ export default function useWebRTCAudioSession(
     currentVolume,
     conversation,
     sendTextMessage,
+    isAISpeaking,
   };
 }

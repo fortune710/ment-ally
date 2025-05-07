@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/react"
 import { TranslationsProvider } from "@/components/translations-context"
 import { Banner } from "@/components/banner";
+import ReactQueryProvider from "@/components/react-query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,13 +51,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TranslationsProvider>
-            <div className="relative flex min-h-dvh flex-col bg-background items-center">
-              <Header />
-              <Banner />
-              <main className="flex flex-1 justify-center items-start">
-                {children}
-              </main>
-            </div>
+            <ReactQueryProvider>
+              <div className="relative flex min-h-dvh flex-col bg-background items-center">
+                {/* <Header /> */}
+                {/* <Banner /> */}
+                <main className="flex flex-1 justify-center items-start">
+                  {children}
+                </main>
+              </div>
+            </ReactQueryProvider>
             <Toaster />
           </TranslationsProvider>
         </ThemeProvider>
